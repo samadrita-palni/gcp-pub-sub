@@ -1,0 +1,44 @@
+steps:
+  # Step 1: Build Docker image for publisher
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/publisher:$COMMIT_SHA', '-f', 'Dockerfile-publisher', 'publisher']
+
+  # Step 2: Push the Docker image to Google Container Registry (GCR)
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/publisher:$COMMIT_SHA']
+
+  # Step 3: Deploy Publisher to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    args:
+      - 'gcloud'
+      - 'run'
+      - 'deploy'
+      - 'publisher'
+      - '--image=gcr.io/$PROJECT_ID/publisher:$COMMIT_SHA'
+      - '--platform=managed'
+      - '--region=us-central1'
+      - '--allow-unauthenticated'
+
+  # Step 4: Build Docker image for subscriber
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/subscriber:$COMMIT_SHA', '-f', 'Dockerfile-subscriber', 'subscriber']
+
+  # Step 5: Push the Docker image to Google Container Registry (GCR)
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/subscriber:$COMMIT_SHA']
+
+  # Step 6: Deploy Subscriber to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    args:
+      - 'gcloud'
+      - 'run'
+      - 'deploy'
+      - 'subscriber'
+      - '--image=gcr.io/$PROJECT_ID/subscriber:$COMMIT_SHA'
+      - '--platform=managed'
+      - '--region=us-central1'
+      - '--allow-unauthenticated'
+
+# Define substitutions for the Cloud Build process
+substitutions:
+  _COMMIT_SHA: "$COMMIT_SHA"

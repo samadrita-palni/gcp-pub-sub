@@ -1,0 +1,15 @@
+{
+  "name": "pub-sub-project",
+  "version": "1.0.0",
+  "description": "Publisher and Subscriber service using Google Cloud Pub/Sub",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "publisher",
+      "subscriber",
+      "create_topic"
+    ]
+  },
+  "author": "",
+  "license": "ISC"
+}

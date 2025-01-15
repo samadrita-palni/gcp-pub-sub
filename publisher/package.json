@@ -1,0 +1,13 @@
+{
+  "name": "publisher",
+  "version": "1.0.0",
+  "description": "publisher",
+  "dependencies": {
+    "express": "^4.17.1",
+    "body-parser": "^1.19.0",
+    "@google-cloud/pubsub": "^2.18.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

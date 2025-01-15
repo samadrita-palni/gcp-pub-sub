@@ -1,0 +1,12 @@
+{
+  "name": "subscriber",
+  "version": "1.0.0",
+  "description": "subscriber",
+  "dependencies": {
+    "@google-cloud/pubsub": "^2.18.0",
+    "dotenv": "^16.4.7"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

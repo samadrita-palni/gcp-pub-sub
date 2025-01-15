@@ -1,0 +1,14 @@
+# Use Google Cloud SDK Alpine image as the base image
+FROM google/cloud-sdk:alpine
+
+# Install OpenJDK 8 (required for Pub/Sub emulator) and other dependencies
+RUN apk add --no-cache openjdk8
+
+# Install the required components (pubsub-emulator and beta)
+RUN gcloud components install pubsub-emulator beta
+
+# Set environment variables for Pub/Sub emulator 
+ENV PUBSUB_EMULATOR_HOST=0.0.0.0:8085
+
+# Command to start the Pub/Sub emulator
+CMD ["gcloud", "beta", "emulators", "pubsub", "start", "--project=local-project", "--host-port=0.0.0.0:8085", "--quiet"]

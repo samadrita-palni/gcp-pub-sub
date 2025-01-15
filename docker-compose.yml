@@ -1,0 +1,50 @@
+version: '3.7'
+
+services:
+  pubsub-emulator:
+    build:
+      context: ./pub-sub-emulator  # Path to the directory with Dockerfile for publisher
+      dockerfile: Dockerfile-pub-sub-emulator
+    container_name: pubsub-emulator
+    ports:
+      - "8085:8085"  # Expose the emulator's port
+    environment:
+      - PUBSUB_EMULATOR_HOST=pubsub-emulator:8085  # Set the environment variable to point to the emulator
+    networks:
+      - pubsub-network
+
+  publisher:
+    build:
+      context: ./publisher  # Path to the directory with Dockerfile for publisher
+      dockerfile: Dockerfile-publisher
+    container_name: publisher
+    env_file:
+      - ./publisher/.env
+    environment:
+      - PUBSUB_EMULATOR_HOST=pubsub-emulator:8085  # Point publisher to the emulator
+    depends_on:
+      - pubsub-emulator
+    ports:
+      - "3000:3000"
+    networks:
+      - pubsub-network
+
+  subscriber:
+    build:
+      context: ./subscriber  # Path to the directory with Dockerfile for subscriber
+      dockerfile: Dockerfile-subscriber
+    container_name: subscriber
+    env_file:
+      - subscriber/.env
+    environment:
+      - PUBSUB_EMULATOR_HOST=pubsub-emulator:8085  # Point subscriber to the emulator
+    depends_on:
+      - pubsub-emulator
+    ports:
+      - "3001:3001"
+    networks:
+      - pubsub-network
+
+networks:
+  pubsub-network:
+    driver: bridge
