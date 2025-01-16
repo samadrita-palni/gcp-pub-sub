@@ -4,7 +4,8 @@
   "description": "subscriber",
   "dependencies": {
     "@google-cloud/pubsub": "^2.18.0",
-    "dotenv": "^16.4.7"
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
   },
   "keywords": [],
   "author": "",

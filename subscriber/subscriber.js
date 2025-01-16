@@ -1,5 +1,9 @@
 require("dotenv").config();
 const { PubSub } = require("@google-cloud/pubsub");
+const express = require('express');
+
+const topicName = process.env.TOPIC_NAME;
+const subscriptionName = process.env.SUBSCRIPTION_NAME;
 
 const pubSubClient = new PubSub({
   projectId: process.env.GCLOUD_PROJECT,
@@ -7,9 +11,6 @@ const pubSubClient = new PubSub({
     apiEndpoint: "pubsub-emulator:8085",
   }),
 });
-
-const topicName = process.env.TOPIC_NAME;
-const subscriptionName = process.env.SUBSCRIPTION_NAME;
 
 async function handleEventMessage(message) {
   const event = JSON.parse(message.data.toString());
@@ -64,3 +65,14 @@ async function createTopicAndSubscription() {
   await createTopicAndSubscription();
   await listenForEvents();
 })();
+
+const app = express();
+
+app.post('/check', (req, res) => {
+  res.status(200).send('OK');
+});
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Subscriber service running on port ${PORT}`);
+});
