@@ -105,8 +105,12 @@ async function publishEvent(event) {
         points: [
           {
             interval: {
-              endTime: new Date().toISOString(),
-              startTime: new Date().toISOString(),
+              startTime: {
+                seconds: Date.now() / 1000,
+              },
+              endTime: {
+                seconds: Date.now() / 1000,
+              },
             },
             value: {
               int64Value: 1,
