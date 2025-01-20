@@ -103,8 +103,8 @@ async function publishEvent(event) {
        },
        points: [{
          interval: {
-           start: { seconds: Math.floor(Date.now() / 1000) },
-           end: { seconds: Math.floor(Date.now() / 1000) },
+          start: { seconds: Math.floor(Date.now() / 1000) },
+          end: { seconds: Math.floor(Date.now() / 1000) + 60 },
          },
          value: {
            int64Value: 1,
