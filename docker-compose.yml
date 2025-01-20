@@ -40,8 +40,29 @@ services:
       - PUBSUB_EMULATOR_HOST=pubsub-emulator:8085  # Point subscriber to the emulator
     depends_on:
       - pubsub-emulator
+      - firebase-emulator
     ports:
-      - "8080:8080"
+      - "3001:3001"
+    networks:
+      - pubsub-network
+
+  firebase-emulator:
+    # build:
+    #   context: ./firebase-emulator
+    #   dockerfile: Dockerfile
+    image: evolutecx/firebase-emulator:latest
+    container_name: firebase-emulator
+    restart: always
+    ports:
+      - 4000:4000 #Emulator UI
+      - 9099:9099 #Firebase Auth
+      - 8080:8080 #Firestore
+      - 9199:9199 #Firebase Cloud Storage
+      - 9000:9000 #Firebase Realtime database
+    environment:
+      - FB_PROJECT_ID=local-project
+    volumes:
+      - ./firebase-data:/firebase/data:rw # <- this stores data on shutdown to ./firebase-data/data/export on your host
     networks:
       - pubsub-network
 

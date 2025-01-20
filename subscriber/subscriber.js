@@ -1,5 +1,6 @@
 require("dotenv").config();
 const { PubSub } = require("@google-cloud/pubsub");
+const admin = require('firebase-admin');
 const express = require('express');
 
 const topicName = process.env.TOPIC_NAME;
@@ -12,9 +13,30 @@ const pubSubClient = new PubSub({
   }),
 });
 
+admin.initializeApp({
+  credential: admin.credential.applicationDefault(),
+});
+
+admin.firestore().settings({
+  ...(process.env.NODE_ENV === "local"  && {host: 'firebase-emulator:8080'}),
+  ssl: process.env.NODE_ENV === "local"?false:true, // Emulator does not require SSL
+});
+
+const firestoreDb = admin.firestore();
+
 async function handleEventMessage(message) {
   const event = JSON.parse(message.data.toString());
   console.log(`Received event: ${JSON.stringify(event)}`);
+
+    // Save event to Firestore
+    try {
+      const eventRef = firestoreDb.collection("events").doc(event.eventId);
+      await eventRef.set(event);
+      console.log(`Event ${event.eventId} saved to Firestore.`);
+    } catch (error) {
+      console.error("Error saving event to Firestore:", error);
+    }
+
   message.ack();
 }
 
