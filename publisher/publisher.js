@@ -106,10 +106,10 @@ async function publishEvent(event) {
           {
             interval: {
               startTime: {
-                seconds: Date.now() / 1000,
+                seconds: Math.floor(Date.now() / 1000) - 1,
               },
               endTime: {
-                seconds: Date.now() / 1000,
+                seconds: Math.floor(Date.now() / 1000),
               },
             },
             value: {
