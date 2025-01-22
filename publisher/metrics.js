@@ -29,7 +29,7 @@ class Metrics {
       // List existing metric descriptors
       const [descriptors] = await this.monitoringClient.listMetricDescriptors({
         name: `projects/${this.projectId}`,
-        filter: 'metric.type: starts_with("custom.googleapis.com/")'
+        filter: 'metric.type = starts_with("custom.googleapis.com/")'
       });
 
       const existingMetric = descriptors.find(
