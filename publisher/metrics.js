@@ -49,7 +49,7 @@ class Metrics {
       });
       this.logger.info(`Custom metric descriptor created: ${descriptor.name}`);
     } catch (err) {
-      this.logger.error({ msg: "Error creating custom metric:", err });
+      this.logger.error({ message: "Error creating custom metric:", err });
     }
   }
 
@@ -89,7 +89,7 @@ class Metrics {
       this.logger.info(`Custom metric event emitted: ${eventType}`);
     } catch (err) {
       this.logger.error({
-        msg: `Error emitting custom metric event for ${eventType}`,
+        message: `Error emitting custom metric event for ${eventType}`,
         err,
       });
     }
