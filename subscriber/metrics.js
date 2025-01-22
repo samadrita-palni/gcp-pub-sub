@@ -61,7 +61,12 @@ class Metrics {
       points: [
         {
           interval: {
-            start: { seconds: new Date().getTime() / 1000 },
+            startTime: {
+              seconds: Math.floor(Date.now() / 1000) - 1,
+            },
+            endTime: {
+              seconds: Math.floor(Date.now() / 1000),
+            },
           },
           value: {
             int64Value: 1,
