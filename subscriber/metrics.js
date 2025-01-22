@@ -18,7 +18,7 @@ class Metrics {
       labels: [
         { key: "eventType", valueType: "STRING", description: "Type of event" },
       ],
-      metricKind: "DELTA",
+      metricKind: "CUMULATIVE",
       valueType: "INT64",
       unit: "1",
       description: "Count of events consumed",

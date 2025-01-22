@@ -2,7 +2,7 @@ const axios = require('axios');
 const { v4: uuidv4 } = require('uuid')
 
 // The URL of the API you want to trigger
-const apiUrl = 'http://localhost:3000/publish-event'; // Replace with your actual API endpoint - https://pub-sub-publisher-921480193289.us-central1.run.app
+const apiUrl = ' https://pub-sub-publisher-921480193289.us-central1.run.app/publish-event'; // Replace with your actual API endpoint - https://pub-sub-publisher-921480193289.us-central1.run.app
 
 // Number of times to call the API in a minute
 const numCalls = 1000;
