@@ -41,6 +41,7 @@ services:
     depends_on:
       - pubsub-emulator
       - firebase-emulator
+      - redis
     ports:
       - "3001:3001"
     networks:
@@ -63,6 +64,17 @@ services:
       - FB_PROJECT_ID=local-project
     volumes:
       - ./firebase-data:/firebase/data:rw # <- this stores data on shutdown to ./firebase-data/data/export on your host
+    networks:
+      - pubsub-network
+
+  redis:
+    container_name: redis
+    image: redis:6-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./.redis-data:/data
+    command: ["redis-server", "--requirepass",  "password"]
     networks:
       - pubsub-network
 

@@ -1,100 +1,66 @@
 require("dotenv").config();
 const { PubSub } = require("@google-cloud/pubsub");
-const admin = require('firebase-admin');
-const express = require('express');
+const express = require("express");
+const TopicManager = require("./topicManager");
+const EventListener = require("./eventListener");
+const ApiService = require("./apiService");
+const Logger = require("./logger");
+const Metrics = require("./metrics");
 
-const topicName = process.env.TOPIC_NAME;
-const subscriptionName = process.env.SUBSCRIPTION_NAME;
+class EventSubscriber {
+  constructor() {
+    this.pubSubClient = new PubSub({
+      projectId: process.env.GCLOUD_PROJECT,
+      ...(process.env.NODE_ENV === "local" && {
+        apiEndpoint: "pubsub-emulator:8085",
+      }),
+    });
 
-const pubSubClient = new PubSub({
-  projectId: process.env.GCLOUD_PROJECT,
-  ...(process.env.NODE_ENV === "local" && {
-    apiEndpoint: "pubsub-emulator:8085",
-  }),
-});
+    this.topicManager = new TopicManager(this.pubSubClient);
 
-admin.initializeApp({
-  credential: admin.credential.applicationDefault(),
-});
+    this.eventListener = new EventListener(this.pubSubClient);
 
-admin.firestore().settings({
-  ...(process.env.NODE_ENV === "local"  && {host: 'firebase-emulator:8080'}),
-  ssl: process.env.NODE_ENV === "local"?false:true, // Emulator does not require SSL
-});
+    this.apiService = new ApiService();
 
-const firestoreDb = admin.firestore();
+    this.logger = new Logger({ logName: "EventSubscriber" });
 
-async function handleEventMessage(message) {
-  const event = JSON.parse(message.data.toString());
-  console.log(`Received event: ${JSON.stringify(event)}`);
+    this.metrics = new Metrics();
+  }
 
-    // Save event to Firestore
-    try {
-      const eventRef = firestoreDb.collection("events").doc(event.eventId);
-      await eventRef.set(event);
-      console.log(`Event ${event.eventId} saved to Firestore.`);
-    } catch (error) {
-      console.error("Error saving event to Firestore:", error);
-    }
+  async initialize() {
+    await this.topicManager.createTopicAndSubscription();
+    await this.eventListener.listenForEvents();
+    await this.metrics.createCustomMetric();
 
-  message.ack();
-}
+    // Express server setup
+    const app = express();
 
-async function listenForEvents() {
-  const subscription = pubSubClient.subscription(subscriptionName);
+    app.post("/check", (req, res) => {
+      res.status(200).send("OK");
+    });
 
-  subscription.on("message", handleEventMessage);
-  subscription.on("error", (err) => {
-    console.error("Error receiving message:", err);
-  });
+    app.get("/aggregations", async (req, res) => {
+      const { eventType, day, hourWindow } = req.query;
+      const data = await this.apiService.getAggregateEvents(
+        eventType,
+        day,
+        hourWindow
+      );
+      res.send(data);
+    });
 
-  console.log(`Listening for events on subscription: ${subscriptionName}`);
-}
+    app.get("/top-performing-events", async (req, res) => {
+      const data = await eventSubscriber.apiService.getTopPerformingEvents();
+      res.send(data);
+    });
 
-async function createTopicAndSubscription() {
-  try {
-    // Create the topic
-    // Check if the topic already exists. If not, create it.
-    const [existingTopic] = await pubSubClient.topic(topicName).exists();
-    if (!existingTopic) {
-      // Create the topic
-      const [topic] = await pubSubClient.createTopic(topicName);
-      console.log(`Topic ${topic.name} created.`);
-    } else {
-      console.log(`Topic ${topicName} already exists.`);
-    }
-
-    // Create the subscription
-    const [existingSubscription] = await pubSubClient
-      .topic(topicName)
-      .subscription(subscriptionName)
-      .exists();
-    if (!existingSubscription) {
-      const [subscription] = await pubSubClient
-        .topic(topicName)
-        .subscription(subscriptionName)
-        .create();
-      console.log(`Subscription ${subscription.name} created.`);
-    } else {
-      console.log(`Subscription ${subscriptionName} already exists.`);
-    }
-  } catch (error) {
-    console.error(`Error creating topic or subscription:`, error);
+    const PORT = process.env.PORT || 3001;
+    app.listen(PORT, () => {
+      this.logger.info(`Subscriber service running on port ${PORT}`);
+    });
   }
 }
 
-(async () => {
-  await createTopicAndSubscription();
-  await listenForEvents();
-})();
-
-const app = express();
-
-app.post('/check', (req, res) => {
-  res.status(200).send('OK');
-});
-
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Subscriber service running on port ${PORT}`);
-});
+// Initialize the EventSubscriber class
+const eventSubscriber = new EventSubscriber();
+eventSubscriber.initialize();
