@@ -15,7 +15,7 @@ class EventAggregator {
     });
 
     this.redisClient.on("error", (error) => {
-      this.logger.error({ msg: "Redis connection error", err: error });
+      this.logger.error({ message: "Redis connection error", err: error });
     });
 
     this.redisClient.on("connect", () => {
