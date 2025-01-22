@@ -15,7 +15,12 @@ class EventListener {
     const event = JSON.parse(message.data.toString());
     const processTimestamp = Date.now();
     const latency = processTimestamp - event.publishTimestamp;
-    this.logger.info({ message: "event received", event,  eventId: event.eventId, latency});
+    this.logger.info({
+      message: "event received",
+      event,
+      eventId: event.eventId,
+      latency,
+    });
     await this.eventAggregator.aggregateEvents([event]);
     message.ack();
     this.metrics.emitCustomMetricEvent(event.eventType);

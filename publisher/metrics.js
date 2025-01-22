@@ -6,7 +6,7 @@ class Metrics {
   constructor() {
     this.projectId = process.env.GCLOUD_PROJECT;
     this.monitoringClient = new MetricServiceClient();
-    this.ingestedCountMetricType="custom.googleapis.com/event_ingested_count";
+    this.ingestedCountMetricType = "custom.googleapis.com/event_ingested_count";
     this.logger = new Logger({ logName: "Metrics" });
   }
 

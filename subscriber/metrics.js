@@ -6,24 +6,23 @@ class Metrics {
   constructor() {
     this.projectId = process.env.GCLOUD_PROJECT;
     this.monitoringClient = new MetricServiceClient();
-    this.consumedCountMetricType="custom.googleapis.com/event_consumed_count";
+    this.consumedCountMetricType = "custom.googleapis.com/event_consumed_count";
     this.logger = new Logger({ logName: "Metrics" });
   }
 
   async createCustomMetric() {
     if (process.env.NODE_ENV === "local") return;
 
-  const metricDescriptor = {
-    type: this.consumedCountMetricType,
-    labels: [
-      { key: "eventType", valueType: "STRING", description: "Type of event" },
-    ],
-    metricKind: 'DELTA',
-    valueType: 'INT64',
-    unit: '1',
-    description: 'Count of events consumed'
-  };
-
+    const metricDescriptor = {
+      type: this.consumedCountMetricType,
+      labels: [
+        { key: "eventType", valueType: "STRING", description: "Type of event" },
+      ],
+      metricKind: "DELTA",
+      valueType: "INT64",
+      unit: "1",
+      description: "Count of events consumed",
+    };
 
     try {
       // List existing metric descriptors
@@ -57,16 +56,18 @@ class Metrics {
     if (process.env.NODE_ENV === "local") return;
 
     const timeSeriesData = {
-      metric: { type: this.consumedCountMetricType ,labels: { eventType }, },
-      resource: { type: 'global' },
-      points: [{
-        interval: {
-          start: { seconds: new Date().getTime() / 1000 }
+      metric: { type: this.consumedCountMetricType, labels: { eventType } },
+      resource: { type: "global" },
+      points: [
+        {
+          interval: {
+            start: { seconds: new Date().getTime() / 1000 },
+          },
+          value: {
+            int64Value: 1,
+          },
         },
-        value: {
-          int64Value: 1
-        }
-      }]
+      ],
     };
 
     try {
