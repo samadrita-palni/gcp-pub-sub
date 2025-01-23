@@ -1,7 +1,7 @@
 require("dotenv").config();
 const admin = require("firebase-admin");
 const Logger = require("./logger");
-const firestoreDb=require('./common/firebaseClient');
+const firestoreDb = require("./common/firebaseClient");
 
 class FirebaseUtils {
   constructor() {
@@ -24,7 +24,6 @@ class FirebaseUtils {
   }
 
   async getEvents(key, eventCollection) {
-    console.log(key);
     const row = await this.firestoreDb
       .collection(eventCollection)
       .doc(key)

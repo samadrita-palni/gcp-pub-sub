@@ -24,10 +24,13 @@ class ApiService {
 
     const record = await this.firebaseUtils.getEvents(key, eventCollection);
 
-    if (!record || !record[eventType]) {
+    if (!record || !record.events) {
       return {};
     } else {
-      return record[eventType];
+      if (eventType) {
+        return record.events[eventType] || {};
+      }
+      return record.events;
     }
   }
 
