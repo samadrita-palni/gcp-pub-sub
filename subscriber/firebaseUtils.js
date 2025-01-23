@@ -1,22 +1,11 @@
 require("dotenv").config();
 const admin = require("firebase-admin");
 const Logger = require("./logger");
+const firestoreDb=require('./common/firebaseClient');
 
 class FirebaseUtils {
   constructor() {
-    if (admin.apps.length === 0) {
-      admin.initializeApp({
-        credential: admin.credential.applicationDefault(),
-        //databaseUrl:if not using the default db
-      });
-
-      admin.firestore().settings({
-        ...(process.env.NODE_ENV === "local" && { host: "firebase-emulator:8080" }),
-        ssl: process.env.NODE_ENV === "local" ? false : true, // Emulator does not require SSL
-      });
-    }
-
-    this.firestoreDb = admin.firestore();
+    this.firestoreDb = firestoreDb;
 
     this.logger = new Logger({ logName: "FirebaseUtils" });
   }

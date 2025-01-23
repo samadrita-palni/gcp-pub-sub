@@ -1,34 +1,14 @@
 require("dotenv").config();
-const redis = require("ioredis");
 const moment = require("moment");
 const FirebaseUtils = require("./firebaseUtils");
 const Logger = require("./logger");
+const redisClient = require("./common/redisClient");
 
 class EventAggregator {
   constructor() {
     this.logger = new Logger({ logName: "EventAggregator" });
 
-    this.redisClient = new redis({
-      host: process.env.REDIS_HOST || "localhost", // 'redis' is the service name from Docker Compose
-      port: process.env.REDIS_PORT || 6379,
-      ...(process.env.NODE_ENV === "local" && { password: process.env.REDIS_PASSWORD }),
-    });
-
-    this.redisClient.on("error", (error) => {
-      this.logger.error({ message: "Redis connection error", err: error });
-    });
-
-    this.redisClient.on("connect", () => {
-      this.logger.info("Successfully connected to Redis");
-    });
-
-    this.redisClient.on("reconnecting", () => {
-      this.logger.info("Attempting to reconnect to Redis");
-    });
-
-    this.redisClient.on("end", () => {
-      this.logger.info("Got disconnected from Redis");
-    });
+    this.redisClient = redisClient;
 
     this.firebaseUtils = new FirebaseUtils();
   }

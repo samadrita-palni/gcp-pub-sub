@@ -1,5 +1,4 @@
 require("dotenv").config();
-const { PubSub } = require("@google-cloud/pubsub");
 const express = require("express");
 const TopicManager = require("./topicManager");
 const EventListener = require("./eventListener");
@@ -9,16 +8,9 @@ const Metrics = require("./metrics");
 
 class EventSubscriber {
   constructor() {
-    this.pubSubClient = new PubSub({
-      projectId: process.env.GCLOUD_PROJECT,
-      ...(process.env.NODE_ENV === "local" && {
-        apiEndpoint: "pubsub-emulator:8085",
-      }),
-    });
+    this.topicManager = new TopicManager();
 
-    this.topicManager = new TopicManager(this.pubSubClient);
-
-    this.eventListener = new EventListener(this.pubSubClient);
+    this.eventListener = new EventListener();
 
     this.apiService = new ApiService();
 

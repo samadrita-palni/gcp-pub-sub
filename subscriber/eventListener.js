@@ -1,9 +1,10 @@
 const EventAggregator = require("./eventAggregator");
 const Logger = require("./logger");
 const Metrics = require("./metrics");
+const pubSubClient = require("./common/pubSubClient");
 
 class EventListener {
-  constructor(pubSubClient) {
+  constructor() {
     this.pubSubClient = pubSubClient;
     this.subscriptionName = process.env.SUBSCRIPTION_NAME;
     this.eventAggregator = new EventAggregator();

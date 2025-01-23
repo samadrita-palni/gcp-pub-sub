@@ -2,10 +2,10 @@ const axios = require('axios');
 const { v4: uuidv4 } = require('uuid')
 
 // The URL of the API you want to trigger
-const apiUrl = ' https://pub-sub-publisher-921480193289.us-central1.run.app/publish-event'; // Replace with your actual API endpoint - https://pub-sub-publisher-921480193289.us-central1.run.app
+const apiUrl = 'https://pub-sub-publisher-921480193289.us-central1.run.app/publish-event'; // Replace with your actual API endpoint - https://pub-sub-publisher-921480193289.us-central1.run.app
 
 // Number of times to call the API in a minute
-const numCalls = 1000;
+const numCalls = 100;
 const intervalTime = 60000 / numCalls; // Time between each API call (in milliseconds)
 
 // Possible event types to randomize
@@ -25,8 +25,8 @@ function createPayload() {
         timestamp: "2025-01-15T10:00:00Z",
         payload: {
             userId: "user2",
-            emailId: "uds",
-            timestamp: "2025-01-21T11:00:00Z",
+            emailId: "uds@gmail.com",
+            timestamp: "2025-01-23T01:00:00Z",
             revenue:100
         }
     };

@@ -1,7 +1,8 @@
 const Logger = require("./logger");
+const pubSubClient = require("./common/pubSubClient");
 
 class TopicManager {
-  constructor(pubSubClient) {
+  constructor() {
     this.pubSubClient = pubSubClient;
     this.topicName = process.env.TOPIC_NAME;
     this.subscriptionName = process.env.SUBSCRIPTION_NAME;
