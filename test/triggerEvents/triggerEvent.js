@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid')
 const apiUrl = 'http://localhost:3000/publish-event'; // Replace with your actual API endpoint
 
 // Number of times to call the API in a minute
-const numCalls = 100;
+const numCalls = 100000;
 const intervalTime = 60000 / numCalls; // Time between each API call (in milliseconds)
 
 // Possible event types to randomize
